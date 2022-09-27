@@ -14,7 +14,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     private final ProductJPARepository productJPARepository;
 
     @Override
-    public ProductEntity saveProduct(ProductEntity productEntity) {
+    public ProductEntity save(ProductEntity productEntity) {
         return productJPARepository.save(productEntity);
     }
 
@@ -22,4 +22,11 @@ public class ProductRepositoryImpl implements ProductRepository {
     public List<ProductEntity> findAll() {
         return productJPARepository.findAll();
     }
+
+    @Override
+    public ProductEntity findByProductId(String productId) {
+        return productJPARepository.findByProductId(productId);
+    }
+
+
 }

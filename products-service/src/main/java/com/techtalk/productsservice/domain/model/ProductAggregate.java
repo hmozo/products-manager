@@ -1,5 +1,7 @@
 package com.techtalk.productsservice.domain.model;
 
+import com.doctorkernel.core.domain.commands.ReserveProductCommand;
+import com.doctorkernel.core.domain.events.ProductReservedEvent;
 import com.techtalk.productsservice.domain.commands.CreateProductCommand;
 import com.techtalk.productsservice.domain.events.ProductCreatedEvent;
 import lombok.NoArgsConstructor;
@@ -23,6 +25,7 @@ public class ProductAggregate {
 
     @CommandHandler
     public ProductAggregate(CreateProductCommand createProductCommand) throws Exception {
+
         if(createProductCommand.getPrice().compareTo(BigDecimal.ZERO)<=0) {
             throw new IllegalArgumentException("Price must be greater than 0");
         }
@@ -37,11 +40,32 @@ public class ProductAggregate {
         AggregateLifecycle.apply(productCreatedEvent);
     }
 
+    @CommandHandler
+    public void handle(ReserveProductCommand reserveProductCommand){
+        if(quantity<reserveProductCommand.getQuantity()){
+            throw new IllegalArgumentException(("Insufficient number of items in stock"));
+        }
+
+        ProductReservedEvent productReservedEvent = ProductReservedEvent.builder()
+                .orderId(reserveProductCommand.getOrderId())
+                .productId(reserveProductCommand.getProductId())
+                .quantity(reserveProductCommand.getQuantity())
+                .userId(reserveProductCommand.getUserId())
+                .build();
+
+        AggregateLifecycle.apply(productReservedEvent);
+    }
+
     @EventSourcingHandler
     public void on(ProductCreatedEvent productCreatedEvent) {
         this.productId= productCreatedEvent.getProductId();
         this.title= productCreatedEvent.getTitle();
         this.price= productCreatedEvent.getPrice();
         this.quantity= productCreatedEvent.getQuantity();
+    }
+
+    @EventSourcingHandler
+    public void on(ProductReservedEvent productReservedEvent) {
+        this.quantity -= productReservedEvent.getQuantity();
     }
 }
