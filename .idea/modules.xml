@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/discovery-server/discovery-server.iml" filepath="$PROJECT_DIR$/discovery-server/discovery-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/orders-service/orders-service.iml" filepath="$PROJECT_DIR$/orders-service/orders-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/payments-service/payments-service.iml" filepath="$PROJECT_DIR$/payments-service/payments-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/products-manager.iml" filepath="$PROJECT_DIR$/.idea/products-manager.iml" />
       <module fileurl="file://$PROJECT_DIR$/products-service/products-service.iml" filepath="$PROJECT_DIR$/products-service/products-service.iml" />
     </modules>
