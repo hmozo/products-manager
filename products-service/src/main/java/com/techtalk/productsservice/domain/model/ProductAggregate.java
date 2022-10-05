@@ -1,8 +1,11 @@
 package com.techtalk.productsservice.domain.model;
 
-import com.doctorkernel.core.domain.commands.ReserveProductCommand;
+import com.doctorkernel.core.domain.commands.CancelProductReservationCommand;
+import com.doctorkernel.core.domain.commands.ReserveProductCommand2;
+import com.doctorkernel.core.domain.events.ProductReservationCancelledEvent;
 import com.doctorkernel.core.domain.events.ProductReservedEvent;
 import com.techtalk.productsservice.domain.commands.CreateProductCommand;
+import com.techtalk.productsservice.domain.commands.ReserveProductCommand;
 import com.techtalk.productsservice.domain.events.ProductCreatedEvent;
 import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
@@ -41,7 +44,7 @@ public class ProductAggregate {
     }
 
     @CommandHandler
-    public void handle(ReserveProductCommand reserveProductCommand){
+    public void handle(ReserveProductCommand2 reserveProductCommand){
         if(quantity<reserveProductCommand.getQuantity()){
             throw new IllegalArgumentException(("Insufficient number of items in stock"));
         }
@@ -56,6 +59,19 @@ public class ProductAggregate {
         AggregateLifecycle.apply(productReservedEvent);
     }
 
+    @CommandHandler
+    public void handle(CancelProductReservationCommand cancelProductReservationCommand){
+        ProductReservationCancelledEvent productReservationCancelledEvent= ProductReservationCancelledEvent.builder()
+                .orderId(cancelProductReservationCommand.getOrderId())
+                .productId(cancelProductReservationCommand.getProductId())
+                .quantity(cancelProductReservationCommand.getQuantity())
+                .reason(cancelProductReservationCommand.getReason())
+                .userId(cancelProductReservationCommand.getUserId())
+                .build();
+
+        AggregateLifecycle.apply(productReservationCancelledEvent);
+    }
+
     @EventSourcingHandler
     public void on(ProductCreatedEvent productCreatedEvent) {
         this.productId= productCreatedEvent.getProductId();
@@ -67,5 +83,10 @@ public class ProductAggregate {
     @EventSourcingHandler
     public void on(ProductReservedEvent productReservedEvent) {
         this.quantity -= productReservedEvent.getQuantity();
+    }
+
+    @EventSourcingHandler
+    public void on(ProductReservationCancelledEvent productReservationCancelledEvent){
+        this.quantity += productReservationCancelledEvent.getQuantity();
     }
 }

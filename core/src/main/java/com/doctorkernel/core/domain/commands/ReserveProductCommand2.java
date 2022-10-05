@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-public class ReserveProductCommand {
+public class ReserveProductCommand2 {
 
     @TargetAggregateIdentifier
     private final String productId;

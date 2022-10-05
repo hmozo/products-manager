@@ -1,5 +1,6 @@
 package com.techtalk.productsservice.interfaces.eventhandlers;
 
+import com.doctorkernel.core.domain.events.ProductReservationCancelledEvent;
 import com.doctorkernel.core.domain.events.ProductReservedEvent;
 import com.techtalk.productsservice.application.querygateway.ProductsEventService;
 import com.techtalk.productsservice.domain.ProductRepository;
@@ -51,5 +52,14 @@ public class ProductEventHandler {
         productRepository.save(productEntity);
 
         log.info("ProductReservedEvent handled for orderId: " + productReservedEvent.getOrderId() + " and productId: " + productReservedEvent.getProductId());
+    }
+
+    @EventHandler
+    public void on(ProductReservationCancelledEvent productReservationCancelledEvent){
+        ProductEntity productEntity= productsEventService.findProductById(productReservationCancelledEvent.getProductId());
+
+        int newQuantity= productEntity.getQuantity() + productReservationCancelledEvent.getQuantity();
+        productEntity.setQuantity(newQuantity);
+        productRepository.save(productEntity);
     }
 }

@@ -1,7 +1,11 @@
 package com.doctorkernel.ordersservice.domain.model;
 
+import com.doctorkernel.ordersservice.domain.commands.ApproveOrderCommand;
 import com.doctorkernel.ordersservice.domain.commands.CreateOrderCommand;
+import com.doctorkernel.ordersservice.domain.commands.RejectOrderCommand;
+import com.doctorkernel.ordersservice.domain.events.OrderApprovedEvent;
 import com.doctorkernel.ordersservice.domain.events.OrderCreatedEvent;
+import com.doctorkernel.ordersservice.domain.events.OrderRejectedEvent;
 import com.doctorkernel.ordersservice.domain.util.OrderStatus;
 import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
@@ -31,6 +35,22 @@ public class OrderAggregate {
        AggregateLifecycle.apply(orderCreatedEvent);
     }
 
+    @CommandHandler
+    public void handle(ApproveOrderCommand approveOrderCommand){
+        OrderApprovedEvent orderApprovedEvent= OrderApprovedEvent.builder()
+                .orderId(approveOrderCommand.getOrderId()).build();
+
+        AggregateLifecycle.apply(orderApprovedEvent);
+    }
+
+    @CommandHandler
+    public void handle(RejectOrderCommand rejectOrderCommand){
+        OrderRejectedEvent orderRejectedEvent= OrderRejectedEvent.builder()
+                .orderId(rejectOrderCommand.getOrderId()).reason(rejectOrderCommand.getReason()).build();
+
+        AggregateLifecycle.apply(orderRejectedEvent);
+    }
+
     @EventSourcingHandler
     public void on(OrderCreatedEvent orderCreatedEvent){
         this.orderId= orderCreatedEvent.getOrderId();
@@ -41,4 +61,13 @@ public class OrderAggregate {
         this.orderStatus= orderCreatedEvent.getOrderStatus();
     }
 
+    @EventSourcingHandler
+    public void on(OrderApprovedEvent orderApprovedEvent){
+        this.orderStatus= orderApprovedEvent.getOrderStatus();
+    }
+
+    @EventSourcingHandler
+    public void on(OrderRejectedEvent orderRejectedEvent){
+        this.orderStatus= orderRejectedEvent.getOrderStatus();
+    }
 }
