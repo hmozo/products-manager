@@ -5,11 +5,16 @@ import com.techtalk.productsservice.domain.errorhandlers.ProductServiceEventErro
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.config.EventProcessingConfigurer;
 import org.axonframework.eventhandling.PropagatingErrorHandler;
+import org.axonframework.eventsourcing.EventCountSnapshotTriggerDefinition;
+import org.axonframework.eventsourcing.SnapshotTriggerDefinition;
+import org.axonframework.eventsourcing.Snapshotter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.function.Function;
 
@@ -36,6 +41,10 @@ public class ProductsServiceApplication {
 		//configurer.registerListenerInvocationErrorHandler(
 		//		"product-group",
 		//		conf-> PropagatingErrorHandler.instance());
+	}
 
+	@Bean(name = "productSnapshotTriggerDefinition")
+	public SnapshotTriggerDefinition productSnapshotTriggerDefinition(Snapshotter snapshotter){
+		return new EventCountSnapshotTriggerDefinition(snapshotter, 2);
 	}
 }

@@ -8,4 +8,5 @@ public interface ProductRepository {
     ProductEntity save(ProductEntity productEntity);
     List<ProductEntity> findAll();
     ProductEntity findByProductId(String productId);
+    void deleteAll();
 }

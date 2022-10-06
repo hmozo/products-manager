@@ -7,6 +7,7 @@ import com.techtalk.productsservice.domain.projection.ProductLookupEntity;
 import lombok.AllArgsConstructor;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
+import org.axonframework.eventhandling.ResetHandler;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -21,5 +22,10 @@ public class ProductLookupEventHandler {
     public void on(ProductCreatedEvent productCreatedEvent) {
         ProductLookupEntity productLookupEntity= new ProductLookupEntity(productCreatedEvent.getProductId(), productCreatedEvent.getTitle());
         productLookupRepository.save(productLookupEntity);
+    }
+
+    @ResetHandler
+    public void reset(){
+        productLookupRepository.deleteAll();
     }
 }

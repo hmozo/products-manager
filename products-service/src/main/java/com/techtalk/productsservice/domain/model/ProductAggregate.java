@@ -1,13 +1,13 @@
 package com.techtalk.productsservice.domain.model;
 
 import com.doctorkernel.core.domain.commands.CancelProductReservationCommand;
-import com.doctorkernel.core.domain.commands.ReserveProductCommand2;
+import com.doctorkernel.core.domain.commands.ReserveProductCommand;
 import com.doctorkernel.core.domain.events.ProductReservationCancelledEvent;
 import com.doctorkernel.core.domain.events.ProductReservedEvent;
 import com.techtalk.productsservice.domain.commands.CreateProductCommand;
-import com.techtalk.productsservice.domain.commands.ReserveProductCommand;
 import com.techtalk.productsservice.domain.events.ProductCreatedEvent;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -17,8 +17,9 @@ import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 
-@Aggregate
+@Aggregate(snapshotTriggerDefinition = "productSnapshotTriggerDefinition")
 @NoArgsConstructor
+@Slf4j
 public class ProductAggregate {
     @AggregateIdentifier
     private String productId;
@@ -44,7 +45,8 @@ public class ProductAggregate {
     }
 
     @CommandHandler
-    public void handle(ReserveProductCommand2 reserveProductCommand){
+    public void handle(ReserveProductCommand reserveProductCommand){
+        log.info("begin handle reserveProductCommand");
         if(quantity<reserveProductCommand.getQuantity()){
             throw new IllegalArgumentException(("Insufficient number of items in stock"));
         }

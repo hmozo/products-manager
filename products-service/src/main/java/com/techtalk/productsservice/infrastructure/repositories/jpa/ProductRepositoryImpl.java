@@ -28,5 +28,10 @@ public class ProductRepositoryImpl implements ProductRepository {
         return productJPARepository.findByProductId(productId);
     }
 
+    @Override
+    public void deleteAll() {
+        productJPARepository.deleteAll();
+    }
+
 
 }

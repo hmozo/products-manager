@@ -20,4 +20,9 @@ public class ProductLookupRepositoryImpl implements ProductLookupRepository {
     public void save(ProductLookupEntity productLookupEntity) {
         productLookupJPARepository.save(productLookupEntity);
     }
+
+    @Override
+    public void deleteAll() {
+        productLookupJPARepository.deleteAll();
+    }
 }
