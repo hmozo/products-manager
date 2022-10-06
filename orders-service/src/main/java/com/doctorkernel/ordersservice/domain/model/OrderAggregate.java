@@ -8,6 +8,7 @@ import com.doctorkernel.ordersservice.domain.events.OrderCreatedEvent;
 import com.doctorkernel.ordersservice.domain.events.OrderRejectedEvent;
 import com.doctorkernel.ordersservice.domain.util.OrderStatus;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -18,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 
 @Aggregate
 @NoArgsConstructor
+@Slf4j
 public class OrderAggregate {
     @AggregateIdentifier
     public String orderId;
@@ -39,7 +41,6 @@ public class OrderAggregate {
     public void handle(ApproveOrderCommand approveOrderCommand){
         OrderApprovedEvent orderApprovedEvent= OrderApprovedEvent.builder()
                 .orderId(approveOrderCommand.getOrderId()).build();
-
         AggregateLifecycle.apply(orderApprovedEvent);
     }
 
